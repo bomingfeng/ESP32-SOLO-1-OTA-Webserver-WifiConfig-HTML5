@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/CMakeFiles/bootloader
+C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/CMakeFiles/bootloader.rule
+C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/CMakeFiles/bootloader-complete.rule
+C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
+C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
