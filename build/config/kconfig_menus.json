@@ -9448,6 +9448,144 @@
                         "children": [
                             {
                                 "children": [],
+                                "depends_on": null,
+                                "help": "If enable, i2c_bus will dynamically check configs and re-install i2c driver before each transfer,\nhence multiple devices with different configs on a single bus can be supported.",
+                                "id": "I2C_BUS_DYNAMIC_CONFIG",
+                                "name": "I2C_BUS_DYNAMIC_CONFIG",
+                                "range": null,
+                                "title": "enable dynamic configuration",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": null,
+                                "help": "task block time when try to take the bus, unit:milliseconds",
+                                "id": "I2C_MS_TO_WAIT",
+                                "name": "I2C_MS_TO_WAIT",
+                                "range": [
+                                    50,
+                                    5000
+                                ],
+                                "title": "mutex block time",
+                                "type": "int"
+                            }
+                        ],
+                        "depends_on": null,
+                        "id": "component-config-bus-options-i2c-bus-options",
+                        "title": "I2C Bus Options",
+                        "type": "menu"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-bus-options",
+                "title": "Bus Options",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "\"Button scan interval\"",
+                        "id": "BUTTON_PERIOD_TIME_MS",
+                        "name": "BUTTON_PERIOD_TIME_MS",
+                        "range": [
+                            2,
+                            20
+                        ],
+                        "title": "BUTTON PERIOD TIME (MS)",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "BUTTON_DEBOUNCE_TICKS",
+                        "name": "BUTTON_DEBOUNCE_TICKS",
+                        "range": [
+                            1,
+                            8
+                        ],
+                        "title": "BUTTON DEBOUNCE TICKS",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "BUTTON_SHORT_PRESS_TIME_MS",
+                        "name": "BUTTON_SHORT_PRESS_TIME_MS",
+                        "range": [
+                            50,
+                            800
+                        ],
+                        "title": "BUTTON SHORT PRESS TIME (MS)",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "BUTTON_LONG_PRESS_TIME_MS",
+                        "name": "BUTTON_LONG_PRESS_TIME_MS",
+                        "range": [
+                            500,
+                            5000
+                        ],
+                        "title": "BUTTON LONG PRESS TIME (MS)",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "\"Maximum number of channels for ADC buttons\"",
+                        "id": "ADC_BUTTON_MAX_CHANNEL",
+                        "name": "ADC_BUTTON_MAX_CHANNEL",
+                        "range": [
+                            1,
+                            5
+                        ],
+                        "title": "ADC BUTTON MAX CHANNEL",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "\"Maximum number of buttons per channel\"",
+                        "id": "ADC_BUTTON_MAX_BUTTON_PER_CHANNEL",
+                        "name": "ADC_BUTTON_MAX_BUTTON_PER_CHANNEL",
+                        "range": [
+                            1,
+                            10
+                        ],
+                        "title": "ADC BUTTON MAX BUTTON PER CHANNEL",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "\"Number of samples per scan\"",
+                        "id": "ADC_BUTTON_SAMPLE_TIMES",
+                        "name": "ADC_BUTTON_SAMPLE_TIMES",
+                        "range": [
+                            1,
+                            4
+                        ],
+                        "title": "ADC BUTTON SAMPLE TIMES",
+                        "type": "int"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-iot-button",
+                "title": "IoT Button",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [
+                            {
+                                "children": [],
                                 "depends_on": "<choice COAP_MBEDTLS_ENCRYPTION_MODE>",
                                 "help": null,
                                 "id": "COAP_MBEDTLS_PSK",
