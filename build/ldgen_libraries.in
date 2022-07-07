@@ -37,7 +37,6 @@ $<TARGET_FILE:__idf_asio>
 $<TARGET_FILE:__idf_bh1750>
 $<TARGET_FILE:__idf_bmp180>
 $<TARGET_FILE:__idf_bmp280>
-$<TARGET_FILE:__idf_bt>
 $<TARGET_FILE:__idf_unity>
 $<TARGET_FILE:__idf_cmock>
 $<TARGET_FILE:__idf_coap>
