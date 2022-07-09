@@ -37,9 +37,6 @@ C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/esp-idf/asio/libasio.a
 C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/esp-idf/bh1750/libbh1750.a
 C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/esp-idf/bmp180/libbmp180.a
 C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/esp-idf/bmp280/libbmp280.a
-C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/esp-idf/bus/libbus.a
-C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/esp-idf/esp_adc_cal/libesp_adc_cal.a
-C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/esp-idf/button/libbutton.a
 C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/esp-idf/unity/libunity.a
 C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/esp-idf/cmock/libcmock.a
 C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/esp-idf/coap/libcoap.a
@@ -51,6 +48,7 @@ C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/esp-idf/ds18x20/libds18
 C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/esp-idf/ds3231/libds3231.a
 C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/esp-idf/nghttp/libnghttp.a
 C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/esp-idf/esp-tls/libesp-tls.a
+C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/esp-idf/esp_adc_cal/libesp_adc_cal.a
 C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/esp-idf/esp_gdbstub/libesp_gdbstub.a
 C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/esp-idf/esp_hid/libesp_hid.a
 C:/ESP/ESP32-SOLO-1/OTA-Webserver-WifiConfig-HTML5/build/esp-idf/tcp_transport/libtcp_transport.a

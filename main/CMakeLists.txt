@@ -1,4 +1,4 @@
-set(COMPONENT_SRCS main.c MyWiFi.c OTAServer.c)
+set(COMPONENT_SRCS main.c MyWiFi.c OTAServer.c storage_handler.c)
 set(COMPONENT_ADD_INCLUDEDIRS ".")
 
 set(COMPONENT_EMBED_TXTFILES WebsiteFiles/index.html WebsiteFiles/favicon.ico WebsiteFiles/jquery-3.4.1.min.js)

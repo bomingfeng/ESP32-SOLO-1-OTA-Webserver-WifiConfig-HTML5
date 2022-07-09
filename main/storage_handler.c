@@ -32,38 +32,6 @@
  * File Local Function Definition and Prototipes
  ************************************************/
 
-/*************************************************
- * External Function Implementation
- ************************************************/
-esp_err_t storage_errInitUserNvs(void)
-{
-    // Set the default wifi logging
-	//esp_log_level_set("storage", ESP_LOG_ERROR);
-    //esp_log_level_set("storage", ESP_LOG_WARN);
-    //esp_log_level_set("storage", ESP_LOG_INFO);
-    esp_log_level_set("storage", ESP_LOG_VERBOSE);
-
-    // Initialize USER NVS
-    esp_err_t err = nvs_flash_init();
-    if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND)
-    {
-        // NVS partition was truncated and needs to be erased
-        ESP_LOGI(TAG, "User NVS erase");
-        ESP_ERROR_CHECK(nvs_flash_erase());
-        err = nvs_flash_init();
-    }
-    ESP_ERROR_CHECK( err );
-	return err;
-}
-
-esp_err_t storage_errDeinit(void)
-{
-    // De-Initialize NVS
-	esp_err_t err;
-	err = nvs_flash_deinit();
-	return err;
-}
-
 esp_err_t storage_errWriteWifiSSID(char *pcStrData, uint8_t u8Length)
 {
 	esp_err_t err = ESP_OK;

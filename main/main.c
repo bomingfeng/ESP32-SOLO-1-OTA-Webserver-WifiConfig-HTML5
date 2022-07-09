@@ -19,7 +19,7 @@
  **/
 void app_main()
 {
-	gpio_reset_pin(3);
+/*	gpio_reset_pin(3);
     gpio_reset_pin(4);
     gpio_reset_pin(5);
     gpio_reset_pin(18);
@@ -34,7 +34,7 @@ void app_main()
     gpio_set_direction(5, GPIO_MODE_OUTPUT);
     gpio_set_direction(18, GPIO_MODE_OUTPUT);
     gpio_set_direction(19, GPIO_MODE_OUTPUT);
-
+*/
 	//Initialize NVS
 	esp_err_t ret = nvs_flash_init();
 	if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {

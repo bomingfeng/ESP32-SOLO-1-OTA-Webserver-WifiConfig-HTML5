@@ -1,8 +1,6 @@
 source "C:/ESP/esp-idf/components/app_trace/Kconfig"
 source "C:/ESP/esp-idf/components/asio/Kconfig"
 source "C:/ESP/esp-idf/components/bt/Kconfig"
-source "C:/ESP/esp-idf/components/bus/Kconfig"
-source "C:/ESP/esp-idf/components/button/Kconfig"
 source "C:/ESP/esp-idf/components/coap/Kconfig"
 source "C:/ESP/esp-idf/components/driver/Kconfig"
 source "C:/ESP/esp-idf/components/efuse/Kconfig"

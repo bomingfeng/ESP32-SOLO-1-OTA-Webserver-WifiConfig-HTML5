@@ -11,8 +11,11 @@
 #include "OTAServer.h"
 #include "MyWiFi.h"
 #include "esp_sleep.h"
+#include "nvs_flash.h"
+#include "nvs.h"
 
 #define STORAGE_KEY_wifi_ap_sta  "wifi_ap_sta"
+#define TAG "MyWiFi"
 
 /* FreeRTOS event group to signal when we are connected*/
 EventGroupHandle_t wifi_event_group;
@@ -24,7 +27,7 @@ const int AP_CLIENT_DISCONNECTED_BIT = BIT1;
 const int WIFI_STA_CONNECTED_BIT = BIT3;
 const int WIFI_STA_DISCONNECTED_BIT = BIT4;
 
-EventGroupHandle_t wifi_event_group;
+
 
 static void ip_event_handler(void* arg, esp_event_base_t event_base,
                                 int32_t event_id, void* event_data)
@@ -34,7 +37,7 @@ static void ip_event_handler(void* arg, esp_event_base_t event_base,
 			printf("SYSTEM_EVENT_STA_GOT_IP\r\n");
  			ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
         	ESP_LOGI("WiFI", "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
-			xEventGroupSetBits(wifi_event_group, WIFI_STA_CONNECTED_BIT);
+			//xEventGroupSetBits(wifi_event_group, WIFI_STA_CONNECTED_BIT);
 			/* Start the web server */
 			start_OTA_webserver();
 			/* Signal to continue execution */
@@ -103,7 +106,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
 			{
 				boot_ap = 0x55;
 				boot_sta = 0x55;
-				xEventGroupClearBits(wifi_event_group, WIFI_STA_DISCONNECTED_BIT);
+				//xEventGroupClearBits(wifi_event_group, WIFI_STA_DISCONNECTED_BIT);
 				ESP_LOGI("WiFI","connect to the AP fail");
 				xEventGroupSetBits(wifi_event_group, CONNECTION_FAILED_BIT);
                 xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
@@ -143,7 +146,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
 			wifi_event_ap_staconnected_t* event = (wifi_event_ap_staconnected_t*) event_data;
         	ESP_LOGI("WiFI-AP", "station "MACSTR" join, AID=%d",	\
                 MAC2STR(event->mac), event->aid);
-			xEventGroupSetBits(wifi_event_group, AP_CLIENT_CONNECTED_BIT);
+			//xEventGroupSetBits(wifi_event_group, AP_CLIENT_CONNECTED_BIT);
 			/* Start the web server */
 			start_OTA_webserver();
 			break;
@@ -153,7 +156,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
 			wifi_event_ap_stadisconnected_t* event = (wifi_event_ap_stadisconnected_t*) event_data;
         	ESP_LOGI("WiFI-AP", "station "MACSTR" leave, AID=%d",	\
                 MAC2STR(event->mac), event->aid);
-			xEventGroupSetBits(wifi_event_group, AP_CLIENT_DISCONNECTED_BIT);
+			//xEventGroupSetBits(wifi_event_group, AP_CLIENT_DISCONNECTED_BIT);
 			break;
 		}
 		case WIFI_EVENT_AP_PROBEREQRECVED: {
@@ -439,16 +442,40 @@ void wifi_ap_sta(void *pvParam)
 	vTaskDelete(NULL);
 }
 
-void mywifi_init(void)
+esp_err_t storage_Write_WifiModes_Flag(uint8_t u8Flag)
 {
 	nvs_handle_t my_handle;
-	uint8_t u8Length = 0;
-	uint8_t u8TempBuffer[33] = {};
-	uint8_t WifiModes;//0 sta. 1 ap
-	esp_err_t err；
+	esp_err_t err = ESP_OK;
+	err = nvs_open("storage", NVS_READWRITE, &my_handle);
+	if (err != ESP_OK) 
+	{
+		ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
+		//ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
+	}
+	else 
+	{	
+		err = nvs_set_u8(my_handle, STORAGE_KEY_wifi_ap_sta, u8Flag);
+		if(err != ESP_OK)
+		{
+			ESP_LOGE(TAG, "NVS Write Failed!");
+		}
+		if(err == ESP_OK)
+		{
+			//Commit written value to ensure it's updated in NVS
+			err = nvs_commit(my_handle);
+			if(err != ESP_OK)
+			{
+				ESP_LOGE(TAG, "NVS Commit Failed!");
+			}
+		}
+		nvs_close(my_handle); //Close
+	}	
+}
 
-	/* Create the event group to handle wifi events */
-    wifi_event_group = xEventGroupCreate();
+esp_err_t storage_Read_WifiModes_Flag(uint8_t *u8Flag)
+{
+	nvs_handle_t my_handle;
+	esp_err_t err = ESP_OK;
 	// Open
     printf("\n");
     printf("Opening Non-Volatile Storage (NVS) handle... ");
@@ -464,12 +491,12 @@ void mywifi_init(void)
         // Read
         printf("Reading restart counter from NVS ... \n");
         
-        err = nvs_get_u8(my_handle, STORAGE_KEY_wifi_ap_sta, &WifiModes);
+        err = nvs_get_u8(my_handle, STORAGE_KEY_wifi_ap_sta, u8Flag);
         switch (err) 
         {
             case ESP_OK:
                 printf("Done\n");
-                printf("Restart counter = %d\n", WifiModes);
+                printf("Restart counter = %d\n", *u8Flag);
                 break;
             case ESP_ERR_NVS_NOT_FOUND:
                 printf("The value is not initialized yet!\n");
@@ -480,6 +507,87 @@ void mywifi_init(void)
         // Close
         nvs_close(my_handle);
     }
+}
+
+static void WIFI_vConfigSoftAP(void)
+{
+	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
+	// configure the wifi connection and start the interface
+	wifi_config_t ap_config = {
+		.ap = {
+			.ssid = CONFIG_AP_SSID,
+		.password = CONFIG_AP_PASSPHARSE,
+		.ssid_len = 0,
+		.channel = 0,
+		.authmode = AP_AUTHMODE,
+		.ssid_hidden = AP_SSID_HIDDEN,
+		.max_connection = AP_MAX_CONNECTIONS,
+		.beacon_interval = AP_BEACON_INTERVAL,			
+		},
+	};
+	ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &ap_config));
+	ESP_ERROR_CHECK(esp_wifi_start());
+	start_dhcp_server();
+	printf("ESP WiFi started in AP mode \n");
+	//  Spin up a task to show who connected or disconected
+	//xTaskCreate(&print_sta_info, "print_sta_info", 4096, NULL, 1, NULL);
+	// https://demo-dijiudu.readthedocs.io/en/latest/api-reference/wifi/esp_wifi.html#_CPPv225esp_wifi_set_max_tx_power6int8_t
+	// This can only be placed after esp_wifi_start();
+	ESP_ERROR_CHECK(esp_wifi_set_max_tx_power(8));
+}
+static void WIFI_vConfigStation(void)
+{
+	esp_err_t err = ESP_OK;
+//ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
+	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
+	wifi_config_t wifi_config = {
+		.sta = {
+					.ssid = "",
+					.password = "",
+					/* Setting a password implies station will connect to all security modes including WEP/WPA.
+					* However these modes are deprecated and not advisable to be used. Incase your Access point
+					* doesn't support WPA2, these mode can be enabled by commenting below line */
+					//.threshold.authmode = WIFI_AUTH_WPA2_PSK,
+					.pmf_cfg = {
+							.capable = true,
+							.required = false
+					},
+				},
+	};
+	//read from NVS the Wifi SSID and Password string and their length
+	err = storage_errReadWifiSSID((char*)u8TempBuffer, &u8Length);
+	memcpy(wifi_config.sta.ssid, u8TempBuffer, u8Length);
+	#if 0
+	printf("%s%s%s%d \n", "Wifi : ", u8TempBuffer, " loaded: ", err);
+	printf("Connecting to %s ", wifi_config.sta.ssid);
+	printf("ssid length %d \n", u8Length); 
+	#endif
+
+	memset(u8TempBuffer,0,sizeof(u8TempBuffer));
+	u8Length = 0;	
+	err = storage_errReadWifiPass((char*)u8TempBuffer, &u8Length);
+	memcpy(wifi_config.sta.password, u8TempBuffer, u8Length);
+	#if 0
+	printf("%s%s%s%d \n", "Wifi PASS: ", u8TempBuffer, " loaded: ", err);
+	printf(" using password %s\n", wifi_config.sta.password);
+	printf("pass length %d", u8Length);
+	#endif
+	
+	ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
+	ESP_ERROR_CHECK(esp_wifi_start());
+	ESP_LOGI("WiFi", "Station Set to SSID:%s Pass:%s\r\n", CONFIG_STATION_SSID, CONFIG_STATION_PASSPHRASE);
+}
+
+void mywifi_init(void)
+{
+	nvs_handle_t my_handle;
+	uint8_t u8Length = 0;
+	uint8_t u8TempBuffer[33] = {};
+	uint8_t WifiModes;//0 sta. 1 ap
+	esp_err_t err；
+
+	/* Create the event group to handle wifi events */
+    wifi_event_group = xEventGroupCreate();
 
 	esp_log_level_set("wifi", ESP_LOG_NONE);    // disable wifi driver logging
 	ESP_ERROR_CHECK(esp_netif_init());
@@ -504,74 +612,13 @@ void mywifi_init(void)
 	if(WifiModes != 0)
 	{
 		//init_wifi_softap(&OTA_server);
-
-		ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
-		// configure the wifi connection and start the interface
-		wifi_config_t ap_config = {
-			.ap = {
-				.ssid = CONFIG_AP_SSID,
-			.password = CONFIG_AP_PASSPHARSE,
-			.ssid_len = 0,
-			.channel = 0,
-			.authmode = AP_AUTHMODE,
-			.ssid_hidden = AP_SSID_HIDDEN,
-			.max_connection = AP_MAX_CONNECTIONS,
-			.beacon_interval = AP_BEACON_INTERVAL,			
-			},
-		};
-		ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &ap_config));
-		ESP_ERROR_CHECK(esp_wifi_start());
-		start_dhcp_server();
-		printf("ESP WiFi started in AP mode \n");
-		//  Spin up a task to show who connected or disconected
-		//xTaskCreate(&print_sta_info, "print_sta_info", 4096, NULL, 1, NULL);
-		// https://demo-dijiudu.readthedocs.io/en/latest/api-reference/wifi/esp_wifi.html#_CPPv225esp_wifi_set_max_tx_power6int8_t
-		// This can only be placed after esp_wifi_start();
-		ESP_ERROR_CHECK(esp_wifi_set_max_tx_power(8));
+		WIFI_vConfigSoftAP();
+		
 	}
 	else
 	{
 		//init_wifi_station(&OTA_server);
-
-		//ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
-		ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
-		wifi_config_t wifi_config = {
-        	.sta = {
-						.ssid = "",
-						.password = "",
-						/* Setting a password implies station will connect to all security modes including WEP/WPA.
-						* However these modes are deprecated and not advisable to be used. Incase your Access point
-						* doesn't support WPA2, these mode can be enabled by commenting below line */
-						//.threshold.authmode = WIFI_AUTH_WPA2_PSK,
-						.pmf_cfg = {
-								.capable = true,
-								.required = false
-						},
-        			},
-    	};
-		err = ESP_OK;
-		//read from NVS the Wifi SSID and Password string and their length
-		err = storage_errReadWifiSSID((char*)u8TempBuffer, &u8Length);
-		memcpy(wifi_config.sta.ssid, u8TempBuffer, u8Length);
-		#if 0
-		printf("%s%s%s%d \n", "Wifi : ", u8TempBuffer, " loaded: ", err);
-		printf("Connecting to %s ", wifi_config.sta.ssid);
-		printf("ssid length %d \n", u8Length); 
-		#endif
-
-		memset(u8TempBuffer,0,sizeof(u8TempBuffer));
-		u8Length = 0;	
-		err = storage_errReadWifiPass((char*)u8TempBuffer, &u8Length);
-		memcpy(wifi_config.sta.password, u8TempBuffer, u8Length);
-		#if 0
-		printf("%s%s%s%d \n", "Wifi PASS: ", u8TempBuffer, " loaded: ", err);
-		printf(" using password %s\n", wifi_config.sta.password);
-		printf("pass length %d", u8Length);
-		#endif
-		
-		ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
-		ESP_ERROR_CHECK(esp_wifi_start());
-		ESP_LOGI("WiFi", "Station Set to SSID:%s Pass:%s\r\n", CONFIG_STATION_SSID, CONFIG_STATION_PASSPHRASE);
+		WIFI_vConfigStation();
 	}
 	//xTaskCreate(&wifi_ap_sta, "wifi_ap_sta", 2048, NULL, ESP_TASK_PRIO_MIN + 1, NULL);
 	for(;;)
@@ -592,58 +639,10 @@ void mywifi_init(void)
                 //If connection is lost clear the provisioning available flag and stop wifi and re-start in AccessPoint Mode
                 ESP_LOGI(TAG, "Connection lost! Stopping Wifi to switch to AccessPoint Mode.");
                 ESP_ERROR_CHECK(esp_wifi_stop());
-
-
-				err = ESP_OK;
-				err = nvs_open("storage", NVS_READWRITE, &my_handle);
-				if (err != ESP_OK) 
-				{
-					ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
-					//ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
-				}
-				else 
-				{	
-					WifiModes = 1;
-					err = nvs_set_u8(my_handle, STORAGE_KEY_wifi_ap_sta, WifiModes);
-					if(err != ESP_OK)
-					{
-						ESP_LOGE(TAG, "NVS Write Failed!");
-					}
-					if(err == ESP_OK)
-					{
-						//Commit written value to ensure it's updated in NVS
-						err = nvs_commit(my_handle);
-						if(err != ESP_OK)
-						{
-							ESP_LOGE(TAG, "NVS Commit Failed!");
-						}
-					}
-					nvs_close(my_handle); //Close
-				}	
+				//storage_Write_WifiModes_Flag(0x01);
+				storage_errWriteProvisioningAvailableFlag(0x01)；
                 vTaskDelay(50 / portTICK_PERIOD_MS);
-                ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
-                // configure the wifi connection and start the interface
-				wifi_config_t ap_config = {
-					.ap = {
-						.ssid = CONFIG_AP_SSID,
-					.password = CONFIG_AP_PASSPHARSE,
-					.ssid_len = 0,
-					.channel = 0,
-					.authmode = AP_AUTHMODE,
-					.ssid_hidden = AP_SSID_HIDDEN,
-					.max_connection = AP_MAX_CONNECTIONS,
-					.beacon_interval = AP_BEACON_INTERVAL,			
-					},
-				};
-				ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &ap_config));
-				ESP_ERROR_CHECK(esp_wifi_start());
-				start_dhcp_server();
-				printf("ESP WiFi started in AP mode \n");
-				//  Spin up a task to show who connected or disconected
-				//xTaskCreate(&print_sta_info, "print_sta_info", 4096, NULL, 1, NULL);
-				// https://demo-dijiudu.readthedocs.io/en/latest/api-reference/wifi/esp_wifi.html#_CPPv225esp_wifi_set_max_tx_power6int8_t
-				// This can only be placed after esp_wifi_start();
-				ESP_ERROR_CHECK(esp_wifi_set_max_tx_power(8));
+	   			WIFI_vConfigSoftAP();
             }
             else 
             {
@@ -652,17 +651,15 @@ void mywifi_init(void)
         }
         else
         {//////////////////////////////////////////////
-            enWifiMode = WIFI_enCheckProvisioningData();
-            ESP_LOGV(TAG,"Wifi Mode: %d",enWifiMode);
+			storage_Read_WifiModes_Flag(&WifiMode);
+            ESP_LOGV(TAG,"Wifi Mode: %d",WifiMode);
             //received new Provisioning Data, but not tested yet.
-            if(enWifiMode == enStationMode)
+            if(enWifiMode == 0)
             {
                 ESP_LOGI(TAG, "New Provisioning data received. Stopping Wifi to switch to Station Mode.");
                 ESP_ERROR_CHECK(esp_wifi_stop());
                 ESP_LOGI(TAG,"Wifi Station initializing!");
-                ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
-                WIFI_vConfigStation();
-                ESP_ERROR_CHECK(esp_wifi_start());
+				WIFI_vConfigStation();
             }
             else
             {

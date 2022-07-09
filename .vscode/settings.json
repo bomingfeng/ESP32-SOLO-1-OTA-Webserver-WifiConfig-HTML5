@@ -8,6 +8,9 @@
   "idf.portWin": "COM3",
   "idf.flashType": "UART",
   "files.associations": {
-    "*.inc": "c"
+    "*.inc": "c",
+    "storage_handler.h": "c",
+    "wifi_handler.h": "c",
+    "config.h": "c"
   }
 }
