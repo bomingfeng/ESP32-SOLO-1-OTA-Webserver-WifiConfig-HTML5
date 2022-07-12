@@ -19,7 +19,7 @@ CMenuDC menuDC;				/*全局菜单变量*/
 
 //光标调整常量
 #if SMENU_01_CURSOR==1
-code const unsigned short CursorIncr[]=
+const unsigned short CursorIncr[]=
 {1,10,100,1000,10000};
 #endif
 

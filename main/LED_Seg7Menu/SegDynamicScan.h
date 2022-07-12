@@ -11,25 +11,24 @@
 #define _LIB_SEG7_DYNAMIC_SCAN_H_
 
 /*头文件--------------------------------------------------------------------------------------*/
-#include <AT89X55.H>
-//#include ""
+
 
 /*用户配置------------------------------------------------------------------------------------*/
 //数码管数目
 #define SEG_DIGIT_NUM		8
 
 //消隐 关闭所有显示
-#define SegDyn_Hidden()		P0=0xff
+#define SegDyn_Hidden()		//P0=0xff
 //输出段数据与位数据
-#define SegDyn_OutputData(Index)				\
-			P1 = segDisBuff[Index];				\
-			P0 = ~(1<<Index);
+#define SegDyn_OutputData(Index)				
+			//P1 = segDisBuff[Index];				
+			//P0 = ~(1<<Index);
 
 /*变量引用------------------------------------------------------------------------------------*/
 //显示缓冲区
 extern unsigned char segDisBuff[SEG_DIGIT_NUM];
 //LED数码管字库
-extern code const unsigned char SegDigCode[];
+extern const unsigned char SegDigCode[];
 
 /*接口函数------------------------------------------------------------------------------------*/
 void SegDynamicScan(void);

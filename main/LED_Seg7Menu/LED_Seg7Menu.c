@@ -16,7 +16,7 @@ void CMenu_Quit(void)
 }
 
 //≤Àµ•√Ë ˆ
-code const CMenuItem menuList[]=
+ const CMenuItem menuList[]=
 {
 	{{0xd4,0,0x06,0},MENU_VALUTYPE_U16,-9999,9999,&config[0],CValueMenu_Proc},
 	{{0xd4,0,0x5b,0},MENU_VALUTYPE_U16,0,100,&config[1],CValueMenu_Proc},
@@ -27,7 +27,7 @@ code const CMenuItem menuList[]=
 	{{0xd4,0,0x07,0},MENU_VALUTYPE_U16,0,100,&config[6],CValueMenu_Proc},
 	{{0xd4,0,0x7f,0},MENU_VALUTYPE_U16,0,100,&config[7],CValueMenu_Proc},
 	{{0xd4,0,0x6f,0},MENU_VALUTYPE_U16,0,100,&config[8],CValueMenu_Proc},
-	{0,0,0,0,0,0}
+	{{0,0,0,0},0,0,0,0,0}
 };
 
 unsigned char keyTimer,cursorTimer;
@@ -43,14 +43,14 @@ void LED_Seg7Menu_Task(void * parameter)
 
 		{
 			//∞¥º¸…®√Ë
-			P2 = 0xff;
+			/*P2 = 0xff;
 
 			if (!P2_0) {aKey=WM_KEY_ADD;}
 			else if (!P2_1){aKey = WM_KEY_SET;}
 			else if (!P2_2){aKey = WM_KEY_SUB;}
 			else if (!P2_3){aKey = WM_KEY_LEFT;}
 			else if (!P2_4){aKey = WM_KEY_RIGHT;}
-			else {aKey = WM_KEY_NULL;}
+			else {aKey = WM_KEY_NULL;}*/
 
 			CMenu_KeyEvent(aKey);
 		}

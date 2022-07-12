@@ -13,3 +13,5 @@
 #include "menu.h"
 #include "seg7font.h"
 #include "SegDynamicScan.h"
+
+void LED_Seg7Menu_Task(void * parameter);

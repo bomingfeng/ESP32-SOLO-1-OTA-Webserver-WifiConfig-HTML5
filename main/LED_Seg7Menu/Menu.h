@@ -130,8 +130,8 @@ CMenuDC;						/*全局菜单上下文*/
 
 extern CMenuDC menuDC;			/*全局菜单变量*/
 extern unsigned char cursorTimer;
-extern code const unsigned short CursorIncr[];
-extern code const unsigned char SegDigCode[];
+extern const unsigned short CursorIncr[];
+extern const unsigned char SegDigCode[];
 /*宏函数--------------------------------------------------------------------------------------*/
 
 //获取当前菜单项指针

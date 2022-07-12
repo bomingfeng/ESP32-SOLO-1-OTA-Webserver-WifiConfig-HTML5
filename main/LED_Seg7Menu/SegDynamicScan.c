@@ -18,7 +18,7 @@
 //显示缓冲区
 unsigned char segDisBuff[SEG_DIGIT_NUM];
 
-code const unsigned char SegDigCode[]=
+const unsigned char SegDigCode[]=
 {SEG7_CODE_0,SEG7_CODE_1,SEG7_CODE_2,SEG7_CODE_3,SEG7_CODE_4,
 SEG7_CODE_5,SEG7_CODE_6,SEG7_CODE_7,SEG7_CODE_8,SEG7_CODE_9};
 /*接口函数------------------------------------------------------------------------------------*/
