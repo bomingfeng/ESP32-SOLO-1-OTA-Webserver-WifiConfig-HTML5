@@ -11,6 +11,10 @@
     "*.inc": "c",
     "storage_handler.h": "c",
     "wifi_handler.h": "c",
-    "config.h": "c"
+    "config.h": "c",
+    "led_seg7menu.h": "c",
+    "seg7font.h": "c",
+    "menu.h": "c",
+    "message.h": "c"
   }
 }
